@@ -1,7 +1,7 @@
 const PubSub = require('../helpers/pub_sub.js');
 
-const SelectedView = function (list) {
-  this.list = list;
+const SelectedView = function (dropdown) {
+  this.dropdown = dropdown;
 }
 
 SelectedView.prototype.bindingEvents = function () {
@@ -9,6 +9,11 @@ SelectedView.prototype.bindingEvents = function () {
     const result = evt.detail;
     this.populate(result);
   });
+
+  this.dropdown.addEventListener('change', (evt) => {
+    const selectedIndex = evt.target.value;
+    PubSub.publish('SelectedView:change-dropdown', selectedIndex);
+  })
 };
 
 SelectedView.prototype.populate = function (allData) {
@@ -16,7 +21,7 @@ SelectedView.prototype.populate = function (allData) {
     const option = document.createElement(`option`);
     option.textContent = data.name;
     option.value = index;
-    this.list.appendChild(option);
+    this.dropdown.appendChild(option);
   })
 };
 

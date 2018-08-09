@@ -6,7 +6,8 @@ const MunrosList = function (container) {
 }
 
 MunrosList.prototype.bindingEvents = function () {
-  PubSub.subscribe('Munros:all-munros-ready', (evt) => {
+  PubSub.subscribe('Munros:munros-ready', (evt) => {
+    this.container.innerHTML = ``;
     const munros = evt.detail;
     this.render(munros);
   });

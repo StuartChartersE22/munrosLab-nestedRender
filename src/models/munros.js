@@ -5,12 +5,25 @@ const Munros = function () {
 this.munros = null;
 }
 
+Munros.prototype.bindingEvents = function () {
+  this.getData();
+  PubSub.subscribe('SelectedView:change-dropdown', (evt) => {
+    const selectedIndex = evt.detail;
+    if(selectedIndex === `all`){
+      PubSub.publish('Munros:munros-ready', this.munros);
+    }else {
+      const selectedRegion = this.munrosByRegions[selectedIndex];
+      PubSub.publish('Munros:munros-ready', selectedRegion.munros);
+    };
+  })
+};
+
 Munros.prototype.getData = function () {
   const request = new Request('https://munroapi.herokuapp.com/api/munros');
   request.get()
   .then((data) => {
     this.munros = data;
-    PubSub.publish('Munros:all-munros-ready', this.munros);
+    PubSub.publish('Munros:munros-ready', this.munros);
     this.getAllRegions();
   })
   .catch((err) => {
@@ -21,9 +34,8 @@ Munros.prototype.getData = function () {
 Munros.prototype.getAllRegions = function () {
 
   const regions = getRegions(this.munros);
-  const munrosByRegions = filterToRegions(regions, this.munros);
-  PubSub.publish('Munros:all-regions-ready', munrosByRegions);
-  console.dir(munrosByRegions);
+  this.munrosByRegions = filterToRegions(regions, this.munros);
+  PubSub.publish('Munros:all-regions-ready', this.munrosByRegions);
 };
 
 function getRegions(munros) {
