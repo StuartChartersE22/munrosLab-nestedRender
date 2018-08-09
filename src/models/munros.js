@@ -42,7 +42,6 @@ Munros.prototype.getAllRegions = function () {
 };
 
 function getRegions(munros) {
-  const regions = [];
   return munros.reduce((regions, munro) => {
     if(!regions.includes(munro.region)){
       regions.push(munro.region);
